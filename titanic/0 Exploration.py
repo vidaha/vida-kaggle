@@ -15,15 +15,43 @@
 
 # COMMAND ----------
 
-# MAGIC %sql CREATE TABLE if not exists titanic_train
+# MAGIC %sql DROP TABLE if exists titanic_train
+
+# COMMAND ----------
+
+# MAGIC %sql CREATE TEMPORARY TABLE titanic_train_csv
 # MAGIC   USING csv
 # MAGIC   OPTIONS (path "dbfs:/FileStore/tables/vida/kaggle/titanic/train.csv", header "true", mode "FAILFAST")
 
 # COMMAND ----------
 
-# MAGIC %sql CREATE TABLE if not exists titanic_test
+# MAGIC %sql CREATE TABLE titanic_train 
+# MAGIC   USING delta
+# MAGIC   select * from titanic_train_csv
+
+# COMMAND ----------
+
+# MAGIC %sql OPTIMIZE titanic_train
+
+# COMMAND ----------
+
+# MAGIC %sql DROP TABLE if exists titanic_test
+
+# COMMAND ----------
+
+# MAGIC %sql CREATE TEMPORARY TABLE titanic_test_csv
 # MAGIC   USING csv
 # MAGIC   OPTIONS (path "dbfs:/FileStore/tables/vida/kaggle/titanic/test.csv", header "true", mode "FAILFAST")
+
+# COMMAND ----------
+
+# MAGIC %sql CREATE TABLE titanic_test 
+# MAGIC   USING delta
+# MAGIC   select * from titanic_test_csv
+
+# COMMAND ----------
+
+# MAGIC %sql OPTIMIZE titanic_test
 
 # COMMAND ----------
 
@@ -147,6 +175,3 @@
 # COMMAND ----------
 
 # MAGIC %sql select parch, Survived, count(*) from titanic_train group by parch, Survived order by parch, Survived asc
-
-# COMMAND ----------
-
